@@ -11,7 +11,7 @@ export default async function userValidator(
   id?: string
 ): Promise<[boolean, ErrorObject]> {
   let errors: ErrorObject = {};
-  const { email, firstName, lastName, password } = data;
+  const { email, firstName, lastName, userName, password } = data;
 
   if ((data as User).id !== undefined) {
     console.log("user", data, id);
@@ -26,6 +26,11 @@ export default async function userValidator(
   if (!lastName || lastName.length < 2) {
     errors.author = "Last name must be at least 2 characters long";
   }
+
+  if (!userName || userName.length < 2) {
+    errors.userName = "Username must be at least 2 characters long";
+  }
+
   if (!email || !email.includes("@")) {
     errors.email = "Email is required";
   }

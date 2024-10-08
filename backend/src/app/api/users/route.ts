@@ -20,31 +20,25 @@ export async function GET(req: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const body: UserData = await request.json();
+    const body = await request.json();
+    console.log("Request body:", body);
 
     const [hasErrors, errors] = await userValidator(body);
     if (hasErrors) {
-      return NextResponse.json(
-        {
-          errors,
-        },
-        { status: 400 }
-      );
+      return NextResponse.json({ errors }, { status: 400 });
     }
 
-    const newUser: User = await prisma.user.create({
+    const newUser = await prisma.user.create({
       data: body,
     });
-    return NextResponse.json(newUser);
+    return NextResponse.json(newUser, { status: 201 });
   } catch (error: any) {
     console.warn("Error creating user", error);
     return NextResponse.json(
       {
         message: "A valid 'UserData' object has to be sent",
       },
-      {
-        status: 400,
-      }
+      { status: 400 }
     );
   }
 }
