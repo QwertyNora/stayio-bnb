@@ -4,7 +4,6 @@ import listingValidator from "@/utils/validators/listingValidator";
 
 const prisma = new PrismaClient();
 
-// GET:
 export async function GET(request: NextRequest, options: APIOptions) {
   try {
     const listingId = options.params.id;
@@ -27,7 +26,6 @@ export async function GET(request: NextRequest, options: APIOptions) {
   }
 }
 
-// PUT:
 export async function PUT(request: NextRequest, options: APIOptions) {
   const listingId = options.params.id;
   let body: Partial<ListingData> | null = null;
@@ -41,7 +39,6 @@ export async function PUT(request: NextRequest, options: APIOptions) {
       throw new Error("Invalid body");
     }
 
-    // Validera datan som skickats in för att uppdatera listing
     const [hasErrors, errors] = await listingValidator(body, listingId);
     if (hasErrors) {
       return NextResponse.json({ errors }, { status: 400 });
@@ -75,7 +72,6 @@ export async function PUT(request: NextRequest, options: APIOptions) {
   }
 }
 
-// DELETE:
 export async function DELETE(request: NextRequest, options: APIOptions) {
   const listingId = options.params.id;
 
