@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { UserLoginData } from "@/types/user";
+import { comparePassword } from "@/utils/bcrypt";
+import { signJWT } from "@/utils/jwt";
 
 const prisma = new PrismaClient();
 
@@ -29,41 +31,25 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Kontrollera om lösenordet stämmer (ingen hashning just nu)
-    if (user.password !== password) {
-      return NextResponse.json(
-        { error: "User matching credentials not found" },
-        { status: 400 }
-      );
+    const passwordIsSame = await comparePassword(body.password, user.password);
+    if (!passwordIsSame) {
+      throw new Error("Password missmatch");
     }
 
-    // Returnera användaren (utan token eftersom JWT ännu inte är implementerat)
+    const token = await signJWT({
+      userId: user.id,
+    });
+
     return NextResponse.json({
-      message: "Login successful",
-      user: {
-        id: user.id,
-        email: user.email,
-        userName: user.userName,
-        isAdmin: user.isAdmin,
-      },
+      token: token,
     });
   } catch (error: any) {
-    console.error("Error logging in:", error);
+    console.log("Error: failed to login", error.message);
     return NextResponse.json(
-      { error: "An error occurred while logging in" },
-      { status: 500 }
+      {
+        message: "user matching credentials not found",
+      },
+      { status: 400 }
     );
   }
 }
-
-//TODO: Implement user login
-
-//TODO: validate incoming data
-
-//TODO: find user on email
-//!ELSE: return 400 "user matching credentials not found"
-
-//TODO: validate password is matching
-//!ELSE: return 400 "user matching credentials not found"
-
-//TODO: return user
