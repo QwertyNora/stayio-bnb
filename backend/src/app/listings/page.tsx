@@ -5,7 +5,7 @@ import axios from "axios";
 
 const backendUrl = "http://localhost:3000";
 
-export default function Home() {
+export default function Listings() {
   const [listings, setListings] = useState<Listing[]>([]);
 
   useEffect(() => {
