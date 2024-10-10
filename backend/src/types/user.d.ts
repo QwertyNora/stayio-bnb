@@ -1,13 +1,16 @@
-type User = {
-  id: string;
-  userName: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  isAdmin: boolean;
-  password: string;
-  createdAt: Date;
-  updatedAt: Date;
+import { User } from "@prisma/client";
+
+type UserRegistrationData = Omit<User, "id" | "createdAt" | "updatedAt">;
+
+type UserLoginData = Omit<
+  User,
+  "createdAt" | "updatedAt" | "email" | "userName"
+> & {
+  login: string;
 };
 
-type UserData = Omit<User, "id" | "createdAt" | "updatedAt">;
+type UserResetPasswordData = {
+  email: string;
+  newPassword: string;
+  uuid: string;
+};

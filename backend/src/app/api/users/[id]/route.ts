@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import userValidator from "@/utils/validators/userValidator";
+import { UserRegistrationData } from "@/types/user";
 
 const prisma = new PrismaClient();
 
@@ -28,7 +29,7 @@ export async function GET(request: NextRequest, options: APIOptions) {
 
 export async function PUT(request: NextRequest, options: APIOptions) {
   const id = options.params.id;
-  let body: Partial<UserData> | null = null;
+  let body: Partial<UserRegistrationData> | null = null;
 
   try {
     body = await request.json();
