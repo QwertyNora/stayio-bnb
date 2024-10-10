@@ -15,13 +15,11 @@ if (!secret) {
 const encodedSecret = new TextEncoder().encode(secret);
 
 export async function signJWT(payload: JWTUserPayload): Promise<string> {
-  const response = await new Jose.SignJWT(payload)
+  return await new Jose.SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setExpirationTime("1d")
     .sign(encodedSecret);
-
-  return response;
 }
 
 export async function verifyJWT(token: string): Promise<JWTUserPayload | null> {
