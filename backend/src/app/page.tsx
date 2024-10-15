@@ -2,17 +2,21 @@
 
 import { useEffect, useState } from "react";
 import { getListings } from "@/actions/getListings";
-import AuthForm from "@/components/Auth/AuthForm";
 import { ListingCard } from "@/components/listing-card";
 import { motion } from "framer-motion";
 import Link from "next/link";
 
-export default function Home() {
-  const [listings, setListings] = useState<Listing[]>([]); // State to hold listings
-  const [loading, setLoading] = useState(true); // State to track loading
-  const [error, setError] = useState(""); // State to track errors
+import { Spinner } from "@/components/ui/spinner";
 
-  // Fetch listings using useEffect (client-side)
+// import { cn } from '@/lib/utils';
+// import { VariantProps, cva } from 'class-variance-authority';
+// import { Loader2 } from 'lucide-react';
+
+export default function Home() {
+  const [listings, setListings] = useState<Listing[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
   useEffect(() => {
     const fetchListings = async () => {
       try {
@@ -26,10 +30,16 @@ export default function Home() {
     };
 
     fetchListings();
-  }, []); // Empty dependency array ensures it only runs once
+  }, []);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex flex-col justify-center items-center h-screen bg-gray-100">
+        <Spinner className="text-grey-100">
+          <span className="text-grey-200">Loading ...</span>
+        </Spinner>
+      </div>
+    );
   }
 
   if (error) {
@@ -88,12 +98,12 @@ export default function Home() {
             ))}
           </div>
         </div>
-        <AuthForm />
       </section>
     </div>
   );
 }
 
+//! Old code
 // "use client";
 
 // import { getListings } from "@/actions/getListings";
