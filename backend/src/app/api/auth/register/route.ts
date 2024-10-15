@@ -30,6 +30,7 @@ export async function POST(request: NextRequest) {
       ...user,
       password: undefined,
     };
+    console.log("Created user (API):", userWithoutPassword);
     return NextResponse.json(userWithoutPassword, { status: 201 });
   } catch (error: any) {
     console.warn("Error creating user", error);
@@ -41,3 +42,7 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
+// TODO:
+// Ändra username or email i login
+// Ta password twice från blogerino och show etc

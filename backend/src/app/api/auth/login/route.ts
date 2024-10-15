@@ -9,19 +9,21 @@ const prisma = new PrismaClient();
 export async function POST(request: NextRequest) {
   try {
     const body: UserLoginData = await request.json();
-    const { login, password } = body;
+    const { emailOrUserName, password } = body;
 
-    if (!login || !password) {
+    if (!emailOrUserName || !password) {
       return NextResponse.json(
         { error: "Login (username or email) and password are required" },
         { status: 400 }
       );
     }
 
-    const isEmail = login.includes("@");
+    const isEmail = emailOrUserName.includes("@");
 
     const user = await prisma.user.findFirst({
-      where: isEmail ? { email: login } : { userName: login },
+      where: isEmail
+        ? { email: emailOrUserName }
+        : { userName: emailOrUserName },
     });
 
     if (!user) {
