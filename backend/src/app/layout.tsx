@@ -4,6 +4,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import Navigation from "@/components/navigation";
 import Footer from "@/components/footer";
+import Providers from "./Providers";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -32,7 +33,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <Navigation />
-        <main>{children}</main>
+        <Providers>{children}</Providers>
         <Footer />
       </body>
     </html>

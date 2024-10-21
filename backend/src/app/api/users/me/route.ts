@@ -14,6 +14,9 @@ export async function GET(request: NextRequest) {
       where: {
         id: userId,
       },
+      include: {
+        bookings: true, // Inkludera användarens bokningar
+      },
     });
 
     const safeUser = {

@@ -10,6 +10,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Listing } from "@prisma/client";
+import Link from "next/link";
 
 interface ListingCardProps {
   listing: Listing;
@@ -44,7 +45,9 @@ export function ListingCard({ listing }: ListingCardProps) {
         </div>
       </CardContent>
       <CardFooter>
-        <Button className="w-full">View Details</Button>
+        <Link href={`/listings/${listing.id}`}>
+          <Button className="w-full">View Details</Button>
+        </Link>
       </CardFooter>
     </Card>
   );

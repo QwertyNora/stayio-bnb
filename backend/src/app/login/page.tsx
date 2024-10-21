@@ -14,9 +14,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { login } from "@/actions/login";
-import LocalStorageKit from "@/utils/localStorageKit";
 import { Eye, EyeOff } from "lucide-react"; // Import icons for showing/hiding password
+import { useUser } from "@/context/user";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -25,16 +24,24 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const router = useRouter();
 
+  // Hämta actions från useUser
+  const { actions } = useUser();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
-    try {
-      const token = await login(email, password);
-      LocalStorageKit.set("@library/token", token);
-      router.push("/"); // Redirect to home page after successful login
-    } catch (err) {
-      setError("Invalid email or password");
-    }
+    setError(""); // Rensa tidigare felmeddelanden
+
+    // Anropa login från useUser-actions
+    actions.login(
+      email,
+      password,
+      () => {
+        router.push("/"); // Redirect till startsidan vid lyckad inloggning
+      },
+      (err) => {
+        setError("Invalid email or password"); // Visa felmeddelande vid misslyckad inloggning
+      }
+    );
   };
 
   return (
@@ -46,7 +53,6 @@ export default function LoginPage() {
         className="w-full max-w-lg px-6 sm:px-0" // Adjust padding for mobile
       >
         <Card className="p-8 bg-white shadow-none rounded-none border-none sm:shadow-lg sm:rounded-lg sm:border">
-          {" "}
           <CardHeader>
             <CardTitle>Login</CardTitle>
             <CardDescription>
@@ -56,8 +62,7 @@ export default function LoginPage() {
           <CardContent>
             <form onSubmit={handleSubmit}>
               <div className="grid w-full items-center gap-6">
-                {" "}
-                {/* Increased gap between form elements */}
+                {/* Email */}
                 <div className="flex flex-col space-y-2">
                   <Label htmlFor="email">Email or username</Label>
                   <Input
@@ -69,6 +74,7 @@ export default function LoginPage() {
                     required
                   />
                 </div>
+                {/* Password */}
                 <div className="flex flex-col space-y-2 relative">
                   <Label htmlFor="password">Password</Label>
                   <div className="relative">

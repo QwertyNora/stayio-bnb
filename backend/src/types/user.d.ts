@@ -15,4 +15,6 @@ type UserResetPasswordData = {
   uuid: string;
 };
 
-type SafeUser = Omit<User, "password" | "passwordResetUUID">;
+type SafeUser = Omit<User, "password" | "passwordResetUUID"> & {
+  bookings: Booking[];
+};
