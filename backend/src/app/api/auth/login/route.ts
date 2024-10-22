@@ -3,7 +3,6 @@ import { PrismaClient } from "@prisma/client";
 import { UserLoginData } from "@/types/user";
 import { comparePassword } from "@/utils/bcrypt";
 import { signJWT } from "@/utils/jwt";
-import { Familjen_Grotesk } from "next/font/google";
 
 const prisma = new PrismaClient();
 
@@ -44,30 +43,12 @@ export async function POST(request: NextRequest) {
       userId: user.id,
     });
 
-    // Skicka svaret med cookie
-    const response = NextResponse.json({
-      message: "Login successful",
-    });
-
-    // Sätt JWT i httpOnly cookie
-    response.cookies.set("token", token, {
-      httpOnly: true, // Gör cookien oåtkomlig från JavaScript för säkerhet
-      secure: false,
-      // secure: process.env.NODE_ENV === "production", // Endast säkra cookies i produktion
-      sameSite: "lax", // strict, lax, none
-      path: "/", // Gör cookien tillgänglig över hela webbplatsen
-      maxAge: 60 * 60 * 24 * 7, // Token giltig i 7 dagar
-    });
-
-    console.log("Cookie set with token:", token);
-
-    return response;
+    // Returnera token till frontend så att den kan lagras i localStorage
+    return NextResponse.json({ token }, { status: 200 });
   } catch (error: any) {
     console.log("Error: failed to login", error.message);
     return NextResponse.json(
-      {
-        message: "user matching credentials not found",
-      },
+      { message: "user matching credentials not found" },
       { status: 400 }
     );
   }

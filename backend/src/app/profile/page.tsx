@@ -13,13 +13,31 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true); // Laddningsindikator
   const router = useRouter();
 
+  console.log("User: ", user);
+  console.log("Token: ", token);
+
   useEffect(() => {
     const loadProfile = async () => {
-      const token = localStorage.getItem("token"); // Hämta token från localStorage
+      const token = localStorage.getItem("@library/token"); // Hämta token från localStorage
       if (token) {
-        await fetchWithToken("/api/users/me", token);
+        try {
+          // Gör en explicit begäran till servern och inkludera token
+          const response = await fetch("/api/auth/profile", {
+            headers: {
+              Authorization: `Bearer ${token}`, // Inkludera JWT-tokenen i Authorization-headern
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error("Unauthorized");
+          }
+
+          // Om framgång, fortsätt ladda profilen
+        } catch (error) {
+          router.push("/login"); // Omdirigera vid fel
+        }
       } else {
-        router.push("/login"); // Om ingen token finns, omdirigera till login
+        router.push("/login"); // Omdirigera om ingen token finns
       }
     };
 

@@ -6,6 +6,7 @@ const prisma = new PrismaClient();
 export async function GET(request: NextRequest) {
   try {
     const userId = request.headers.get("userId");
+
     if (!userId) {
       throw new Error("Failed to get userId from headers");
     }

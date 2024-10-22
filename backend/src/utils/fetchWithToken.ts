@@ -5,7 +5,7 @@ export async function fetchWithToken(
 ) {
   const headers = {
     ...options.headers,
-    Authorization: `Bearer ${token}`,
+    Authorization: `Bearer ${token}`, // Lägg till Authorization-headern med JWT
     "Content-Type": "application/json",
   };
 

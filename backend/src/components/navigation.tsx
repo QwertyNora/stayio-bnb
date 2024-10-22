@@ -49,34 +49,21 @@ const Navigation = () => {
   const handleLogout = async () => {
     console.log("Logging out...");
 
-    // Anropa logout-funktionen från useUser actions (som nu hanterar att ta bort cookien)
-    await actions.logout();
+    // Anropa logout-funktionen från useUser actions (som hanterar att ta bort token från localStorage)
+    actions.logout();
+
+    // localStorage.removeItem("@library/token");
+
+    // Kontrollera om token verkligen har tagits bort
+    const tokenAfterLogout = LocalStorageKit.get("@library/token");
+    console.log("Token after logout: ", tokenAfterLogout); // Kontrollera om token rensats
+
+    // Uppdatera isLoggedIn state manuellt för att trigga om-rendering
+    setIsLoggedIn(false);
 
     // Omdirigera användaren till login-sidan
     router.push("/login");
   };
-
-  // const handleLogout = () => {
-  //   console.log("Logging out...");
-
-  //   // Anropa logout-funktionen från useUser actions
-  //   actions.logout();
-
-  //   // Ta bort token från local storage (detta bör även hanteras av logout)
-  //   LocalStorageKit.remove("@library/token");
-
-  //   // Kontrollera att token rensats från local storage
-  //   console.log(
-  //     "Token in local storage after logout:",
-  //     LocalStorageKit.get("@library/token")
-  //   );
-
-  //   // Uppdatera isLoggedIn state
-  //   setIsLoggedIn(false);
-
-  //   // Omdirigera användaren till login-sidan
-  //   router.push("/login");
-  // };
 
   const menuVariants = {
     closed: { opacity: 0, x: "-100%" },

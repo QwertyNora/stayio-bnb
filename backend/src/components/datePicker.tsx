@@ -62,7 +62,7 @@ const DateRangePicker = (props: RangePickerProps) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`, // Skicka JWT-tokenen i Authorization-headern
         },
         body: JSON.stringify({
           listingId: props?.listingId,

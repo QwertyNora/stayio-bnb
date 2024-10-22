@@ -32,26 +32,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Navigation />
-        <Providers>{children}</Providers>
+        <Providers>
+          <Navigation />
+          {children}
+        </Providers>
         <Footer />
       </body>
     </html>
   );
 }
-
-// export default function RootLayout({
-//   children,
-// }: Readonly<{
-//   children: React.ReactNode;
-// }>) {
-//   return (
-//     <html lang="en">
-//       <body
-//         className={`bg-gray-100 ${geistSans.variable} ${geistMono.variable}`}
-//       >
-//         {children}
-//       </body>
-//     </html>
-//   );
-// }

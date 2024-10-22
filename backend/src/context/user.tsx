@@ -1,4 +1,3 @@
-//! Funkar ej korrekt:
 "use client";
 import {
   createContext,
@@ -56,21 +55,6 @@ function UserProvider({ children }: PropsWithChildren) {
     }
   }, [token]);
 
-  // Lyssna på förändringar i localStorage för att hantera dynamiska uppdateringar av token
-  useEffect(() => {
-    const handleStorageChange = () => {
-      const updatedToken = LocalStorageKit.get("@library/token");
-      console.log("Token changed in storage:", updatedToken);
-      setToken(updatedToken);
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-    };
-  }, []);
-
   const login = async (
     email: string,
     password: string,
@@ -78,35 +62,27 @@ function UserProvider({ children }: PropsWithChildren) {
     onError: OnError
   ) => {
     try {
-      const token = await loginAction(email, password);
+      const token = await loginAction(email, password); // Hämta token från API
       setToken(token);
-      LocalStorageKit.set("@library/token", token);
+      LocalStorageKit.set("@library/token", token); // Spara token i localStorage
       onComplete(token);
     } catch (error: any) {
       onError(error);
     }
   };
 
-  const logout = async () => {
+  const logout = () => {
     console.log("Logging out...");
-
-    try {
-      // Anropa API för att ta bort token-cookien från serversidan
-      await fetch("/api/auth/logout", {
-        method: "POST",
-      });
-
-      // Rensa användarens data och token från state
-      setUser(null);
-      setToken(null);
-
-      // Kontrollera att token har rensats (om du också vill rensa från local storage av andra skäl)
-      LocalStorageKit.remove("@library/token");
-
-      console.log("Logged out successfully");
-    } catch (error) {
-      console.error("Error during logout:", error);
-    }
+    setUser(null);
+    setToken(null);
+    console.log("Removing token from LocalStorageKit...");
+    LocalStorageKit.remove("@library/token"); // Rensa token från localStorage
+    setTimeout(() => {
+      console.log(
+        "Token after timeout: ",
+        localStorage.getItem("@library/token")
+      );
+    }, 500); // Vänta 500 ms och kontrollera om token är borta
   };
 
   const getUser = async () => {

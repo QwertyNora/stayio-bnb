@@ -17,7 +17,6 @@ export default async function ListingDetailsPage({
   }
 
   const bookedDates = listing.bookedDates.map((date: Date) => new Date(date));
-  console.log(bookedDates);
 
   return (
     <div className="container mx-auto px-4 py-8">

@@ -3,6 +3,7 @@ type LocalStorageKey = "@library/token";
 class LocalStorageKit {
   static set(key: LocalStorageKey, data: any) {
     if (typeof window !== "undefined") {
+      console.log(`Setting token with key: ${key}`);
       let jsonData = typeof data === "string" ? data : JSON.stringify(data);
       localStorage.setItem(key, jsonData);
     }
@@ -10,6 +11,7 @@ class LocalStorageKit {
 
   static get(key: LocalStorageKey) {
     if (typeof window !== "undefined") {
+      console.log(`Getting token with key: ${key}`);
       const jsonData = localStorage.getItem(key);
       try {
         if (!jsonData) {
@@ -25,7 +27,9 @@ class LocalStorageKit {
 
   static remove(key: LocalStorageKey) {
     if (typeof window !== "undefined") {
+      console.log(`Removing key: ${key}`);
       localStorage.removeItem(key);
+      console.log(`Token after removal: ${localStorage.getItem(key)}`); // Kontrollera att token är borta
     }
   }
 }
