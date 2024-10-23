@@ -51,7 +51,7 @@ model Listing {
   createdById String           @db.ObjectId
   bookedBy    Booking[]
   bookedDates DateTime[]
-  isAvailable Boolean
+  isAvailable Boolean?         @default(true)
   amenities   ListingAmenity[] // Many-to-Many relation via a junction table
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt

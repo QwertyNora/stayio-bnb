@@ -12,7 +12,4 @@ type Listing = {
   updatedAt: Date;
 };
 
-type ListingData = Omit<
-  Listing,
-  "id" | "createdAt" | "updatedAt" | "createdById"
->;
+type ListingData = Omit<Listing, "id" | "createdAt" | "updatedAt">;

@@ -82,6 +82,24 @@ export default function ProfilePage() {
           Hello, {user?.userName}!
         </h1>
 
+        {/* Kort med user-info */}
+        <Card className="p-8 bg-white shadow-lg rounded-lg mb-4">
+          <h2 className="text-xl font-semibold mb-4">User information:</h2>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            className="p-4 bg-gray-50 rounded-lg border"
+          >
+            <p>
+              <strong>Email:</strong> {user?.email}
+            </p>
+            <p>
+              <strong>Username:</strong> {user?.userName}
+            </p>
+          </motion.div>
+        </Card>
+
         {/* Profil-kort med bokningsinformation */}
         <Card className="p-8 bg-white shadow-lg rounded-lg">
           <h2 className="text-xl font-semibold mb-4">

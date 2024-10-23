@@ -17,9 +17,15 @@ export default function CreateListingPage() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`, // Skicka JWT-token
         },
-        body: JSON.stringify(values),
+        body: JSON.stringify({
+          title: values.title,
+          description: values.description,
+          address: values.address,
+          country: values.country,
+          dailyRate: parseFloat(values.dailyRate), // Konvertera dailyRate till nummer
+        }),
       });
 
       if (response.ok) {
@@ -48,6 +54,15 @@ export default function CreateListingPage() {
         >
           <Input.TextArea />
         </Form.Item>
+
+        <Form.Item name="address" label="Address" rules={[{ required: true }]}>
+          <Input />
+        </Form.Item>
+
+        <Form.Item name="country" label="Country" rules={[{ required: true }]}>
+          <Input />
+        </Form.Item>
+
         <Form.Item
           name="dailyRate"
           label="Daily Rate"
