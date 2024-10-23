@@ -100,23 +100,6 @@ export default function ProfileBookingsPage() {
           )}
         </Card>
       </motion.div>
-
-      <h1>My Bookings</h1>
-      {bookings.length > 0 ? (
-        bookings.map((booking) => (
-          <Card key={booking.id}>
-            <p>Listing: {booking.listing.title}</p>
-            <p>
-              Check-in: {new Date(booking.checkInDate).toLocaleDateString()}
-            </p>
-            <p>
-              Check-out: {new Date(booking.checkOutDate).toLocaleDateString()}
-            </p>
-          </Card>
-        ))
-      ) : (
-        <p>You have no bookings.</p>
-      )}
     </div>
   );
 }
