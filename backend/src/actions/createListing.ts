@@ -16,7 +16,6 @@ export default async function createListing(listingData: ListingData) {
         country: country,
         dailyRate: dailyRate,
         createdById: listingData.createdById, // Associera med användarens ID
-        isAvailable: true,
         bookedDates: [], // Initiera som en tom array
       },
     });

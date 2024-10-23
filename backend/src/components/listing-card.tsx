@@ -39,9 +39,6 @@ export function ListingCard({ listing }: ListingCardProps) {
           <p className="text-lg font-semibold">
             ${listing.dailyRate.toFixed(2)} / night
           </p>
-          <Badge variant={listing.isAvailable ? "success" : "destructive"}>
-            {listing.isAvailable ? "Available" : "Unavailable"}
-          </Badge>
         </div>
       </CardContent>
       <CardFooter>

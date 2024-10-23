@@ -38,12 +38,6 @@ export default async function ListingDetailsPage({
             {listing.address}, {listing.country}
           </p>
 
-          <div className="flex items-center space-x-2 mb-4">
-            <Badge variant={listing.isAvailable ? "success" : "destructive"}>
-              {listing.isAvailable ? "Available" : "Unavailable"}
-            </Badge>
-          </div>
-
           <p className="text-2xl font-semibold mb-6">
             ${listing.dailyRate.toFixed(2)} / night
           </p>

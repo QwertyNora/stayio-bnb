@@ -8,10 +8,6 @@ import Link from "next/link";
 
 import { Spinner } from "@/components/ui/spinner";
 
-// import { cn } from '@/lib/utils';
-// import { VariantProps, cva } from 'class-variance-authority';
-// import { Loader2 } from 'lucide-react';
-
 export default function Home() {
   const [listings, setListings] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
@@ -49,12 +45,8 @@ export default function Home() {
   return (
     <div>
       {/* Hero Section */}
-      <section
-        className="relative h-screen bg-cover bg-center"
-        style={{
-          backgroundImage: `url('https://via.placeholder.com/1920x1080?text=Explore+Your+Next+Adventure')`,
-        }}
-      >
+      <div className="relative h-screen bg-cover bg-center bg-[url('https://via.placeholder.com/1920x1080?text=Explore+Your+Next+Adventure')]">
+        {/* Innehåll */}
         <div className="absolute inset-0 bg-black opacity-50"></div>
         <div className="relative z-10 flex flex-col justify-center items-center h-full text-center text-white">
           <motion.h1
@@ -84,7 +76,7 @@ export default function Home() {
             </motion.button>
           </Link>
         </div>
-      </section>
+      </div>
 
       {/* Featured Listings */}
       <section className="container mx-auto px-4 py-12">

@@ -7,7 +7,6 @@ type Listing = {
   dailyRate: number;
   createdById: string;
   bookedDates: Date[];
-  isAvailable: boolean;
   createdAt: Date;
   updatedAt: Date;
 };
