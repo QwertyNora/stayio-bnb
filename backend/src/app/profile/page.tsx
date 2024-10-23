@@ -13,9 +13,6 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true); // Laddningsindikator
   const router = useRouter();
 
-  console.log("User: ", user);
-  console.log("Token: ", token);
-
   useEffect(() => {
     const loadProfile = async () => {
       const token = localStorage.getItem("@library/token"); // Hämta token från localStorage
@@ -73,7 +70,7 @@ export default function ProfilePage() {
   const hasBookings = bookings.length > 0;
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <div className="flex items-center justify-center min-h-screen bg-gray-100 mt-1">
       <motion.div
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
@@ -81,7 +78,7 @@ export default function ProfilePage() {
         className="w-full max-w-3xl px-6"
       >
         {/* Profil-header */}
-        <h1 className="text-4xl font-bold text-center mb-8">
+        <h1 className="text-4xl font-bold text-center mb-8 mt-8">
           Hello, {user?.userName}!
         </h1>
 
