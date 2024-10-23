@@ -1,188 +1,300 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Search, User } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import LocalStorageKit from "@/utils/localStorageKit";
+import { useRouter } from "next/navigation";
 import { useUser } from "@/context/user";
+import { getListings } from "@/actions/getListings";
+import { Listing } from "@prisma/client";
+import { ListingCard } from "./listing-card";
 
-const Navigation = () => {
-  const { actions } = useUser();
-  const [isOpen, setIsOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [tokenChecked, setTokenChecked] = useState(false); // Flag to wait for token check
-  const pathname = usePathname();
+import {
+  NavigationMenu,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+} from "@/components/ui/navigation-menu";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { Separator } from "@/components/ui/separator";
+
+import {
+  Menu,
+  Search,
+  User,
+  LogOut,
+  X,
+  LogIn,
+  UserPlus,
+  Home,
+  BookOpen,
+  List,
+  CalendarFold,
+} from "lucide-react";
+
+export function Navigation() {
+  const { user, actions } = useUser();
   const router = useRouter();
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<Listing[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [showResults, setShowResults] = useState(false);
 
-  // Check for token initially and when storage changes
   useEffect(() => {
-    const checkToken = () => {
-      const token = LocalStorageKit.get("@library/token");
-      setIsLoggedIn(!!token);
-      setTokenChecked(true); // Mark that token check is complete
+    const handleResize = () => {
+      setIsSmallScreen(window.innerWidth < 768);
     };
-
-    // Run checkToken when the component mounts
-    checkToken();
-
-    // Listen for storage changes (in case token changes from another tab/window)
-    window.addEventListener("storage", checkToken);
-
-    // Cleanup the event listener when component unmounts
-    return () => {
-      window.removeEventListener("storage", checkToken);
-    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Rerun token check on route changes (to handle redirects after login)
-  useEffect(() => {
-    const token = LocalStorageKit.get("@library/token");
-    setIsLoggedIn(!!token);
-  }, [pathname]); // Runs every time the route changes
-
-  const toggleMenu = () => setIsOpen(!isOpen);
-
-  const handleLogout = async () => {
-    console.log("Logging out...");
-
-    // Anropa logout-funktionen från useUser actions (som hanterar att ta bort token från localStorage)
+  const handleLogout = () => {
     actions.logout();
-
-    // localStorage.removeItem("@library/token");
-
-    // Kontrollera om token verkligen har tagits bort
-    const tokenAfterLogout = LocalStorageKit.get("@library/token");
-    console.log("Token after logout: ", tokenAfterLogout); // Kontrollera om token rensats
-
-    // Uppdatera isLoggedIn state manuellt för att trigga om-rendering
-    setIsLoggedIn(false);
-
-    // Omdirigera användaren till login-sidan
     router.push("/login");
   };
 
-  const menuVariants = {
-    closed: { opacity: 0, x: "-100%" },
-    open: { opacity: 1, x: 0 },
+  const handleSearch = async () => {
+    setIsSearching(true);
+    try {
+      const listings = await getListings({});
+      const filteredListings = listings.filter(
+        (listing) =>
+          listing.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          listing.country.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setSearchResults(filteredListings);
+      setShowResults(true);
+    } catch (error) {
+      console.error("Error searching listings:", error);
+    }
+    setIsSearching(false);
   };
 
-  // Render the navigation only after token has been checked
-  if (!tokenChecked) return null; // Avoid rendering until we know the login status
+  const renderSearchBar = () => (
+    <div className="flex items-center flex-grow max-w-md mx-2">
+      <Input
+        type="text"
+        placeholder="Search listings..."
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        className="w-full"
+      />
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={handleSearch}
+        disabled={isSearching}
+      >
+        <Search className="h-4 w-4" />
+      </Button>
+    </div>
+  );
 
-  return (
-    <nav className="bg-white shadow-md">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          <div className="flex">
-            <Link href="/" className="flex-shrink-0 flex items-center">
-              <motion.span
-                className="text-2xl font-bold text-primary"
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                StayIO
-              </motion.span>
-            </Link>
-          </div>
-          <div className="hidden sm:ml-6 sm:flex sm:items-center">
-            <div className="flex space-x-4">
-              <Input
-                type="text"
-                placeholder="Search listings..."
-                className="w-64"
-              />
-              <Button variant="ghost" size="icon">
-                <Search className="h-5 w-5" />
-              </Button>
-            </div>
-            {isLoggedIn ? (
-              <>
-                <Link href="/profile">
+  const renderDesktopNav = () => (
+    <NavigationMenu className="hidden md:flex w-full justify-between items-center">
+      <NavigationMenuList className="flex-grow">
+        <NavigationMenuItem className="flex-grow">
+          {renderSearchBar()}
+        </NavigationMenuItem>
+        {user ? (
+          <>
+            <NavigationMenuItem>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="icon">
-                    <User className="h-5 w-5" />
+                    <User className="h-4 w-4" />
                   </Button>
-                </Link>
-                <Button variant="ghost" onClick={handleLogout}>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuItem asChild>
+                    <Link href="/profile" className="flex items-center">
+                      <Home className="mr-2 h-4 w-4" />
+                      Profile
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link
+                      href="/profile/bookings"
+                      className="flex items-center"
+                    >
+                      <CalendarFold className="mr-2 h-4 w-4" />
+                      My Bookings
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link
+                      href="/profile/listings"
+                      className="flex items-center"
+                    >
+                      <List className="mr-2 h-4 w-4" />
+                      My Listings
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onClick={handleLogout}
+                    className="text-red-600"
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <Button variant="ghost" size="sm" onClick={handleLogout}>
+                <LogOut className="h-4 w-4 mr-2" />
+                Logout
+              </Button>
+            </NavigationMenuItem>
+          </>
+        ) : (
+          <>
+            <NavigationMenuItem>
+              <Link href="/login" legacyBehavior passHref>
+                <NavigationMenuLink>
+                  <Button variant="outline" className="mr-2">
+                    Sign In
+                  </Button>
+                </NavigationMenuLink>
+              </Link>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <Link href="/register" legacyBehavior passHref>
+                <NavigationMenuLink>
+                  <Button>Sign Up</Button>
+                </NavigationMenuLink>
+              </Link>
+            </NavigationMenuItem>
+          </>
+        )}
+      </NavigationMenuList>
+    </NavigationMenu>
+  );
+
+  const renderMobileNav = () => (
+    <div className="flex md:hidden items-center">
+      {renderSearchBar()}
+      <Sheet>
+        <SheetTrigger asChild>
+          <Button variant="ghost" size="icon">
+            <Menu className="h-6 w-6" />
+          </Button>
+        </SheetTrigger>
+        <SheetContent>
+          <SheetHeader>
+            <SheetTitle>Menu</SheetTitle>
+          </SheetHeader>
+          <div className="py-4 flex flex-col items-center">
+            {user ? (
+              <>
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start mb-2"
+                  asChild
+                >
+                  <Link href="/profile">
+                    <Home className="mr-2 h-4 w-4" />
+                    Profile
+                  </Link>
+                </Button>
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start mb-2"
+                  asChild
+                >
+                  <Link href="/profile/bookings">
+                    <CalendarFold className="mr-2 h-4 w-4" />
+                    My Bookings
+                  </Link>
+                </Button>
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start mb-2"
+                  asChild
+                >
+                  <Link href="/profile/listings">
+                    <List className="mr-2 h-4 w-4" />
+                    My Listings
+                  </Link>
+                </Button>
+                <Separator className="my-2" />
+                <Button
+                  variant="destructive"
+                  className="w-full justify-center"
+                  onClick={handleLogout}
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
                   Logout
                 </Button>
               </>
             ) : (
               <>
-                <Link href="/login">
-                  <Button variant="ghost">Sign In</Button>
-                </Link>
-                <Link href="/register">
-                  <Button>Sign Up</Button>
-                </Link>
+                <Button variant="outline" className="w-full mb-2" asChild>
+                  <Link href="/login">
+                    <LogIn className="mr-2 h-4 w-4" />
+                    Sign In
+                  </Link>
+                </Button>
+                <Button className="w-full" asChild>
+                  <Link href="/register">
+                    <UserPlus className="mr-2 h-4 w-4" />
+                    Sign Up
+                  </Link>
+                </Button>
               </>
             )}
           </div>
-          <div className="flex items-center sm:hidden">
-            <Button variant="ghost" size="icon" onClick={toggleMenu}>
-              {isOpen ? (
-                <X className="h-6 w-6" />
-              ) : (
-                <Menu className="h-6 w-6" />
-              )}
-            </Button>
+        </SheetContent>
+      </Sheet>
+    </div>
+  );
+
+  return (
+    <>
+      <nav className="bg-white shadow-md p-4">
+        <div className="max-w-7xl mx-auto flex justify-between items-center">
+          <Link href="/" className="font-bold text-2xl">
+            StayIO
+          </Link>
+          {renderDesktopNav()}
+          {renderMobileNav()}
+        </div>
+      </nav>
+      {showResults && searchResults.length > 0 && (
+        <div className="container mx-auto mt-4 px-4 relative">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="absolute top-0 right-0 mt-2 mr-2"
+            onClick={() => setShowResults(false)}
+          >
+            <X className="h-6 w-6" />
+          </Button>
+          <h2 className="text-2xl font-bold mb-4">Search Results</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {searchResults.map((listing) => (
+              <ListingCard key={listing.id} listing={listing} />
+            ))}
           </div>
         </div>
-      </div>
-
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            className="sm:hidden"
-            initial="closed"
-            animate="open"
-            exit="closed"
-            variants={menuVariants}
-            transition={{ duration: 0.3 }}
-          >
-            <div className="px-2 pt-2 pb-3 space-y-1">
-              <Input
-                type="text"
-                placeholder="Search listings..."
-                className="w-full mb-2"
-              />
-              {isLoggedIn ? (
-                <>
-                  <Link href="/profile">
-                    <Button variant="ghost" className="w-full text-left">
-                      Profile
-                    </Button>
-                  </Link>
-                  <Button
-                    variant="ghost"
-                    className="w-full text-left"
-                    onClick={handleLogout}
-                  >
-                    Logout
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <Link href="/login">
-                    <Button variant="ghost" className="w-full text-left">
-                      Sign In
-                    </Button>
-                  </Link>
-                  <Link href="/register">
-                    <Button className="w-full">Sign Up</Button>
-                  </Link>
-                </>
-              )}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </nav>
+      )}
+    </>
   );
-};
-
-export default Navigation;
+}

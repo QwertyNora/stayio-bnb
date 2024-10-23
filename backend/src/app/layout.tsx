@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
-import Navigation from "@/components/navigation";
+import { Navigation } from "@/components/navigation";
+// import Navigation from "@/components/navigation";
 import Footer from "@/components/footer";
 import Providers from "./Providers";
 
