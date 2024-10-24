@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { DateRangePicker } from "@/components/datePicker";
 import { useEffect, useState } from "react";
 import { message } from "antd";
+import { fetchWithToken } from "@/utils/fetchWithToken";
 
 interface ClientProps {
   listingId: string;
@@ -22,17 +23,20 @@ export default function ListingClientComponent({
   const [bookedDates, setBookedDates] = useState(initialBookedDates);
 
   const refreshListingData = async () => {
+    if (!token) {
+      console.error("No token available");
+      return;
+    }
+
     try {
-      const response = await fetch(`/api/listings/${listingId}`);
-      if (response.ok) {
-        const updatedListing = await response.json();
-        if (updatedListing && updatedListing.bookedDates) {
-          setBookedDates(
-            updatedListing.bookedDates.map((date: string) => new Date(date))
-          );
-        }
-      } else {
-        throw new Error("Failed to fetch updated listing data");
+      const updatedListing = await fetchWithToken(
+        `/api/listings/${listingId}`,
+        token
+      );
+      if (updatedListing && updatedListing.bookedDates) {
+        setBookedDates(
+          updatedListing.bookedDates.map((date: string) => new Date(date))
+        );
       }
     } catch (error) {
       console.error("Error refreshing listing data:", error);
@@ -41,8 +45,10 @@ export default function ListingClientComponent({
   };
 
   useEffect(() => {
-    refreshListingData();
-  }, [listingId]);
+    if (token) {
+      refreshListingData();
+    }
+  }, [listingId, token]);
 
   const handleSubmitBooking = async (
     dates: [Date, Date],
@@ -56,12 +62,8 @@ export default function ListingClientComponent({
 
     try {
       setLoading(true);
-      const response = await fetch("/api/bookings", {
+      const response = await fetchWithToken("/api/bookings", token, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
         body: JSON.stringify({
           listingId: listingId,
           checkInDate: dates[0],
@@ -71,13 +73,9 @@ export default function ListingClientComponent({
         }),
       });
 
-      if (response.ok) {
-        await refreshListingData();
-        message.success("Booking successful");
-        router.push("/profile");
-      } else {
-        throw new Error("Booking failed");
-      }
+      await refreshListingData();
+      message.success("Booking successful");
+      router.push("/profile");
     } catch (error) {
       console.error("Error during booking", error);
       message.error("Booking failed. Please try again.");
