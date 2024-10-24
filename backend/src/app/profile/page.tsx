@@ -99,51 +99,6 @@ export default function ProfilePage() {
             </p>
           </motion.div>
         </Card>
-
-        {/* Profil-kort med bokningsinformation */}
-        <Card className="p-8 bg-white shadow-lg rounded-lg">
-          <h2 className="text-xl font-semibold mb-4">
-            {hasBookings ? "Your bookings:" : "You don't have any bookings"}
-          </h2>
-
-          {hasBookings ? (
-            <div className="space-y-4">
-              {bookings.map((booking) => (
-                <motion.div
-                  key={booking.id}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.2 }}
-                  className="p-4 bg-gray-50 rounded-lg border"
-                >
-                  <p className="text-lg">
-                    Booking at listing ID: <strong>{booking.listingId}</strong>
-                  </p>
-                  <p>
-                    Check-in:{" "}
-                    {new Date(booking.checkInDate).toLocaleDateString()}
-                  </p>
-                  <p>
-                    Check-out:{" "}
-                    {new Date(booking.checkOutDate).toLocaleDateString()}
-                  </p>
-                  <p>Total price: ${booking.totalPrice.toFixed(2)}</p>
-                  <Button
-                    type="primary"
-                    className="mt-4"
-                    onClick={() => handleUpdateBooking(booking.id)}
-                  >
-                    Update booking
-                  </Button>
-                </motion.div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-gray-500">
-              You currently have no bookings. Start booking today!
-            </p>
-          )}
-        </Card>
       </motion.div>
     </div>
   );
