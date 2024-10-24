@@ -5,7 +5,7 @@ export async function fetchWithToken(
 ) {
   const headers = {
     ...options.headers,
-    Authorization: `Bearer ${token}`, // Lägg till Authorization-headern med JWT
+    Authorization: `Bearer ${token}`,
     "Content-Type": "application/json",
   };
 
@@ -15,10 +15,16 @@ export async function fetchWithToken(
   });
 
   if (!response.ok) {
-    const errorData = await response.json();
-    const errorMessage = errorData.message || "Failed to fetch";
+    const errorMessage = `HTTP error! status: ${response.status}`;
+    console.error(errorMessage);
     throw new Error(errorMessage);
   }
 
-  return await response.json();
+  const text = await response.text();
+  try {
+    return JSON.parse(text);
+  } catch (error) {
+    console.error("Failed to parse JSON:", text);
+    throw new Error("Invalid JSON response from server");
+  }
 }

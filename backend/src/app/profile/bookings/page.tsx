@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button, Card } from "antd";
 import { useUser } from "@/context/user";
-import { fetchWithToken } from "@/utils/fetchWithToken"; // Custom utility
+import { fetchWithToken } from "@/utils/fetchWithToken";
 import { motion } from "framer-motion";
 import { Spinner } from "@/components/ui/spinner";
 
@@ -14,27 +14,38 @@ export default function ProfileBookingsPage() {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
-  useEffect(() => {
-    const loadBookings = async () => {
-      if (token) {
-        try {
-          const data = await fetchWithToken("/api/users/me/bookings", token);
-          setBookings(data.bookings || []);
-        } catch (error) {
-          console.error("Failed to fetch bookings", error);
-        } finally {
-          setLoading(false);
-        }
-      } else {
-        router.push("/login");
+  const loadBookings = async () => {
+    if (token) {
+      try {
+        setLoading(true);
+        const data = await fetchWithToken("/api/users/me/bookings", token);
+        setBookings(data.bookings || []);
+      } catch (error) {
+        console.error("Failed to fetch bookings", error);
+      } finally {
+        setLoading(false);
       }
-    };
+    } else {
+      router.push("/login");
+    }
+  };
 
+  useEffect(() => {
     loadBookings();
   }, [token]);
 
+  useEffect(() => {
+    // Refresh data when the page comes into focus
+    const handleFocus = () => {
+      loadBookings();
+    };
+
+    window.addEventListener("focus", handleFocus);
+    return () => window.removeEventListener("focus", handleFocus);
+  }, []);
+
   const handleUpdateBooking = (bookingId: string) => {
-    router.push(`/bookings/update/${bookingId}`); // Redirect till en uppdateringssida för bokningen
+    router.push(`/profile/bookings/${bookingId}`);
   };
 
   if (loading) {
@@ -55,13 +66,14 @@ export default function ProfileBookingsPage() {
         transition={{ duration: 0.5 }}
         className="w-full max-w-3xl px-6"
       >
-        {/* Profil-kort med bokningsinformation */}
         <Card className="p-8 bg-white shadow-lg rounded-lg">
           <h2 className="text-xl font-semibold mb-4">
-            {bookings ? "Your bookings:" : "You don't have any bookings"}
+            {bookings.length > 0
+              ? "Your bookings:"
+              : "You don't have any bookings"}
           </h2>
 
-          {bookings ? (
+          {bookings.length > 0 ? (
             <div className="space-y-4">
               {bookings.map((booking) => (
                 <motion.div

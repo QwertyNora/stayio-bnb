@@ -1,14 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyJWT } from "./utils/jwt";
 
-const PROTECTED_ROUTES = ["/api/users/me", "/api/listings/:id*"];
+const PROTECTED_ROUTES = [
+  "/api/users/me",
+  "/api/listings/:id*",
+  "/api/bookings/:id*",
+];
 
 export async function middleware(request: NextRequest) {
   const url = new URL(request.url);
   const path = url.pathname;
 
-  // Kontrollera om förfrågan gäller en skyddad rutt
-  if (PROTECTED_ROUTES.includes(path)) {
+  // Check if the request is for a protected route
+  if (
+    PROTECTED_ROUTES.some(
+      (route) => path.startsWith(route) || path.match(route)
+    )
+  ) {
     try {
       const Authorization = request.headers.get("Authorization");
 
@@ -17,22 +25,24 @@ export async function middleware(request: NextRequest) {
       }
 
       const token = Authorization.split(" ")[1];
-      const decryptedToken = await verifyJWT(token);
+      const decodedToken = await verifyJWT(token);
 
-      if (!decryptedToken) {
+      if (!decodedToken) {
         throw new Error("Invalid token");
       }
 
-      // Tokenen är giltig, sätt användar-ID i headers
+      // Token is valid, set user ID in headers
       const headers = new Headers(request.headers);
-      headers.set("userId", decryptedToken.userId);
+      headers.set("userId", decodedToken.userId);
 
       return NextResponse.next({
-        headers,
+        request: {
+          headers: headers,
+        },
       });
     } catch (error: any) {
       console.log("Error validating token: ", error.message);
-      return NextResponse.redirect(new URL("/login", request.url));
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
   }
 
@@ -40,5 +50,10 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/profile", "/api/users/me", "/api/listings", "/api/listings/:id*"],
+  matcher: [
+    "/profile",
+    "/api/users/me",
+    "/api/listings/:path*",
+    "/api/bookings/:path*",
+  ],
 };
