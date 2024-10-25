@@ -8,8 +8,6 @@ export async function GET(req: Request) {
   try {
     const userId = req.headers.get("userId") || "";
 
-    console.log("UserId", userId);
-
     const user = await prisma.user.findFirst({
       where: {
         id: userId,
