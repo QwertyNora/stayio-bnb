@@ -23,7 +23,7 @@ export default function AdminPage() {
     }
 
     if (token && user && user.isAdmin) {
-      // fetchListings();
+      fetchListings();
       fetchBookings();
     }
   }, [user, router, token]);
@@ -72,8 +72,6 @@ export default function AdminPage() {
     }
   };
 
-  console.log(user);
-
   if (!user?.isAdmin) {
     return null;
   }
@@ -97,7 +95,7 @@ export default function AdminPage() {
                 </p>
                 <p>Daily Rate: ${listing.dailyRate}</p>
                 <Button
-                  variant="destructive"
+                  // variant="destructive"
                   onClick={() => handleDeleteListing(listing.id)}
                   className="mt-2"
                 >
@@ -123,7 +121,7 @@ export default function AdminPage() {
                 </p>
                 <p>Total Price: ${booking.totalPrice}</p>
                 <Button
-                  variant="destructive"
+                  // variant="destructive"
                   onClick={() => handleDeleteBooking(booking.id)}
                   className="mt-2"
                 >
