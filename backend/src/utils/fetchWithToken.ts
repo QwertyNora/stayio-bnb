@@ -20,11 +20,11 @@ export async function fetchWithToken(
     throw new Error(errorMessage);
   }
 
-  const text = await response.text();
   try {
-    return JSON.parse(text);
+    const data = await response.json();
+    return data;
   } catch (error) {
-    console.error("Failed to parse JSON:", text);
+    console.error("Failed to parse JSON:", error);
     throw new Error("Invalid JSON response from server");
   }
 }
