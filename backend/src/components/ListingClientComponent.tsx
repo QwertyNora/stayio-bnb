@@ -84,6 +84,10 @@ export default function ListingClientComponent({
     }
   };
 
+  if (!user) {
+    return <p>Please log in to book this listing</p>;
+  }
+
   return (
     <div>
       <h1>Book your stay</h1>
