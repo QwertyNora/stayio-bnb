@@ -3,9 +3,9 @@ import { verifyJWT } from "./utils/jwt";
 
 const PROTECTED_ROUTES = [
   "/api/users/me",
-  "/api/listings/:id*",
   "/api/admin/bookings",
   "/api/admin/:path*",
+  "/api/admin/listings",
 ];
 
 const PROTECTED_METHODS = ["POST", "PUT", "PATCH", "DELETE"];
