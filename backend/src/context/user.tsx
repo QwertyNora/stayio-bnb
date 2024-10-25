@@ -61,11 +61,18 @@ function UserProvider({ children }: PropsWithChildren) {
     onError: OnError
   ) => {
     try {
-      const newToken = await loginAction(email, password);
-      setToken(newToken);
-      LocalStorageKit.set("@library/token", newToken);
-      onComplete(newToken);
+      const result = await loginAction(email, password);
+      if (result.error) {
+        onError(new Error(result.error));
+      } else if (result.token) {
+        setToken(result.token);
+        LocalStorageKit.set("@library/token", result.token);
+        onComplete(result.token);
+      } else {
+        onError(new Error("No token received after login"));
+      }
     } catch (error: any) {
+      console.error("Login error:", error);
       onError(error);
     }
   };
@@ -75,33 +82,29 @@ function UserProvider({ children }: PropsWithChildren) {
     setUser(null);
     setToken(null);
     console.log("Removing token from LocalStorageKit...");
-    LocalStorageKit.remove("@library/token"); // Rensa token från localStorage
-    setTimeout(() => {
-      console.log(
-        "Token after timeout: ",
-        localStorage.getItem("@library/token")
-      );
-    }, 500); // Vänta 500 ms och kontrollera om token är borta
+    LocalStorageKit.remove("@library/token");
   };
 
   const getUser = async () => {
     try {
       if (!token) return;
       const _user = await getUserAction(token);
-      setUser(_user);
+      if (_user) {
+        setUser(_user);
+      } else {
+        console.error("Failed to fetch user data");
+        logout();
+      }
     } catch (error: any) {
-      logout(); // Logga ut om token är ogiltig
+      console.error("Error fetching user:", error);
+      if (error.message.includes("401") || error.message.includes("403")) {
+        // Token might be expired or invalid
+        logout();
+      }
     }
   };
-
   return (
-    <UserContext.Provider
-      value={{
-        token,
-        user,
-        actions: { login, logout },
-      }}
-    >
+    <UserContext.Provider value={{ token, user, actions: { login, logout } }}>
       {children}
     </UserContext.Provider>
   );
