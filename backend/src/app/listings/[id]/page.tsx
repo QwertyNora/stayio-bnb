@@ -20,16 +20,17 @@ export default function ListingDetailsPage({
 
   useEffect(() => {
     const fetchListing = async () => {
-      if (token) {
-        const fetchedListing = await getListingById(params.id, token);
-        if (fetchedListing) {
-          setListing(fetchedListing);
-        } else {
-          router.push("/404");
-        }
+      console.log("token: ", token);
+
+      const fetchedListing = await getListingById(params.id);
+      console.log("Fetched listing: ", fetchedListing);
+
+      if (fetchedListing) {
+        setListing(fetchedListing);
       } else {
-        router.push("/login");
+        // router.push("/404");
       }
+
       setLoading(false);
     };
 
