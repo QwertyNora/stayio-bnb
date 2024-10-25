@@ -10,16 +10,6 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    const token = request.headers.get("Authorization")?.split(" ")[1];
-    if (!token) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const decoded = await verifyJWT(token);
-    if (!decoded || !decoded.userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
     const listingId = params.id;
 
     const listing = await prisma.listing.findUnique({
