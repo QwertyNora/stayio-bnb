@@ -1,4 +1,5 @@
 "use server";
+import { getDateRange } from "@/utils/dates";
 import { PrismaClient } from "@prisma/client";
 import dayjs from "dayjs";
 import { revalidateTag } from "next/cache";
@@ -12,17 +13,8 @@ export default async function createBooking(bookingData: BookingData) {
   const { listingId, checkInDate, checkOutDate, totalPrice } = bookingData;
 
   // Skapa en lista med alla datum från checkIn till checkOut
-  const dateRange = [];
-  let currentDate = dayjs(checkInDate);
+  const dateRange = getDateRange(checkInDate, checkOutDate);
 
-  // Generera alla datum mellan checkInDate och checkOutDate, inklusive dessa
-  while (
-    currentDate.isBefore(dayjs(checkOutDate)) ||
-    currentDate.isSame(dayjs(checkOutDate), "day")
-  ) {
-    dateRange.push(currentDate.toDate()); // Lägg till varje datum i arrayen
-    currentDate = currentDate.add(1, "day"); // Öka med en dag
-  }
   console.log("Date range generated:", dateRange);
 
   // Kontrollera om några av datumen i dateRange redan finns i listingens bookedDates

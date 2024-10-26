@@ -4,6 +4,7 @@ import type { GetProps } from "antd";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import Modal from "antd/es/modal/Modal";
+import { getDateRange, stripTimezone } from "@/utils/dates";
 
 type RangePickerProps = GetProps<typeof DatePicker.RangePicker> & {
   bookedDates: Date[];
@@ -46,6 +47,7 @@ export const DateRangePicker = (props: RangePickerProps) => {
     if (range[0] && range[1]) {
       const checkInDate = range[0].toDate();
       const checkOutDate = range[1].toDate();
+
       props.onConfirm([checkInDate, checkOutDate], totalPrice);
     }
     setIsModalVisible(false);

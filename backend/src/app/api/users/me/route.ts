@@ -1,22 +1,39 @@
 import { PrismaClient } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
+import { verifyJWT } from "@/utils/jwt";
 
 const prisma = new PrismaClient();
 
 export async function GET(request: NextRequest) {
   try {
     const userId = request.headers.get("userId");
+    const authHeader = request.headers.get("Authorization");
 
-    if (!userId) {
-      throw new Error("Failed to get userId from headers");
+    if (!userId && !authHeader) {
+      throw new Error("Failed to get userId or Authorization header");
+    }
+
+    let verifiedUserId: string;
+
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      const token = authHeader.split(" ")[1];
+      const decodedToken = await verifyJWT(token);
+      if (!decodedToken) {
+        throw new Error("Invalid token");
+      }
+      verifiedUserId = decodedToken.userId;
+    } else if (userId) {
+      verifiedUserId = userId;
+    } else {
+      throw new Error("Invalid authentication");
     }
 
     const user = await prisma.user.findUniqueOrThrow({
       where: {
-        id: userId,
+        id: verifiedUserId,
       },
       include: {
-        bookings: true, // Inkludera användarens bokningar
+        bookings: true,
       },
     });
 
