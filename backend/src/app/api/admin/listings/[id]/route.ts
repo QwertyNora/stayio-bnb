@@ -1,29 +1,36 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
-import { verifyJWT } from "@/utils/jwt";
 
 const prisma = new PrismaClient();
 
-export async function DELETE(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(req: Request, options: APIOptions) {
   try {
-    const token = req.headers.get("Authorization")?.split(" ")[1];
-
-    if (!token) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const user = await verifyJWT(token);
-
-    if (!user || !user.isAdmin) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    await prisma.listing.delete({
-      where: { id: params.id },
+    const listing = await prisma.listing.findFirst({
+      where: { id: options.params.id },
     });
+
+    if (!listing) {
+      return NextResponse.json({ error: "Listing not found" }, { status: 404 });
+    }
+
+    const bookings = await prisma.booking.findMany({
+      where: { listingId: listing.id },
+    });
+
+    if (bookings.length === 0) {
+      await prisma.listing.delete({
+        where: { id: listing.id },
+      });
+      return NextResponse.json({ message: "Listing deleted successfully" });
+    } else {
+      await prisma.booking.deleteMany({
+        where: { listingId: listing.id },
+      });
+
+      await prisma.listing.delete({
+        where: { id: listing.id },
+      });
+    }
 
     return NextResponse.json({ message: "Listing deleted successfully" });
   } catch (error) {
