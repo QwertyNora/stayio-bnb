@@ -53,6 +53,10 @@ export default function AdminPage() {
     try {
       await fetchWithToken(`/api/admin/listings/${id}`, token, {
         method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
       });
       setListings(listings.filter((listing) => listing.id !== id));
     } catch (error) {
@@ -65,6 +69,10 @@ export default function AdminPage() {
     try {
       await fetchWithToken(`/api/admin/bookings/${id}`, token, {
         method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
       });
       setBookings(bookings.filter((booking) => booking.id !== id));
     } catch (error) {
