@@ -78,7 +78,7 @@ export default function ListingClientComponent({
 
       await refreshListingData();
       message.success("Booking successful");
-      router.push("/profile");
+      router.push("/profile/bookings");
     } catch (error) {
       console.error("Error during booking", error);
       message.error("Booking failed. Please try again.");
