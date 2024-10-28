@@ -12,4 +12,7 @@ type Listing = {
   images?: string[];
 };
 
-type ListingData = Omit<Listing, "id" | "createdAt" | "updatedAt">;
+type ListingData = Omit<Listing, "id" | "createdAt" | "updatedAt"> & {
+  newImages?: string[];
+  removedImages?: string[];
+};
