@@ -101,6 +101,7 @@ export function Navigation() {
         size="icon"
         onClick={handleSearch}
         disabled={isSearching}
+        className="ml-2"
       >
         <Search className="h-4 w-4" />
       </Button>
