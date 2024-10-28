@@ -49,6 +49,7 @@ export async function POST(request: NextRequest) {
     // Skapa ny listing
     const newListing = await createListing({
       ...body,
+      images: body.images || [], // Om det inte finns några bilder, skicka en tom array
       createdById: user.userId, // Skicka med användarens ID från JWT
     });
 
