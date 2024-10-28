@@ -88,6 +88,7 @@ export const DateRangePicker = (props: RangePickerProps) => {
         type="primary"
         onClick={() => setIsModalVisible(true)}
         disabled={!range[0] || !range[1]}
+        className="ml-2"
       >
         {props.actionMode === "create" ? "Book Now" : "Update Booking"}
       </Button>
