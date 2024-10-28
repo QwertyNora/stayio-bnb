@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useUser } from "@/context/user";
 import { getListings } from "@/actions/getListings";
 import { Listing } from "@prisma/client";
-import { ListingCard } from "./listing-card";
+import ListingCard from "./listing-card";
 
 import {
   NavigationMenu,

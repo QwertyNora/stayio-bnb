@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { getListings } from "@/actions/getListings";
-import { ListingCard } from "@/components/listing-card";
+import ListingCard from "@/components/listing-card";
 import { motion } from "framer-motion";
 import Link from "next/link";
 
