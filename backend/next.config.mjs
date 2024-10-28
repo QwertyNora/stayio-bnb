@@ -8,6 +8,12 @@ const nextConfig = {
         port: "",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com", // Lägg till Cloudinarys domän här
+        port: "",
+        pathname: "/**",
+      },
     ],
   },
 };
