@@ -9,6 +9,7 @@ type Listing = {
   bookedDates: Date[];
   createdAt: Date;
   updatedAt: Date;
+  images?: string[];
 };
 
 type ListingData = Omit<Listing, "id" | "createdAt" | "updatedAt">;
