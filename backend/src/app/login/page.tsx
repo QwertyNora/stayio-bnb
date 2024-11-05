@@ -14,32 +14,30 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Eye, EyeOff } from "lucide-react"; // Import icons for showing/hiding password
+import { Eye, EyeOff } from "lucide-react";
 import { useUser } from "@/context/user";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false); // State for showing/hiding password
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
 
-  // Hämta actions från useUser
   const { actions } = useUser();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(""); // Rensa tidigare felmeddelanden
+    setError("");
 
-    // Anropa login från useUser-actions
     actions.login(
       email,
       password,
       () => {
-        router.push("/"); // Redirect till startsidan vid lyckad inloggning
+        router.push("/");
       },
       (err) => {
-        setError("Invalid email or password"); // Visa felmeddelande vid misslyckad inloggning
+        setError("Invalid email or password");
       }
     );
   };
@@ -50,7 +48,7 @@ export default function LoginPage() {
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="w-full max-w-lg px-6 sm:px-0" // Adjust padding for mobile
+        className="w-full max-w-lg px-6 sm:px-0"
       >
         <Card className="p-8 bg-white shadow-none rounded-none border-none sm:shadow-lg sm:rounded-lg sm:border">
           <CardHeader>
@@ -80,7 +78,7 @@ export default function LoginPage() {
                   <div className="relative">
                     <Input
                       id="password"
-                      type={showPassword ? "text" : "password"} // Toggle between text and password types
+                      type={showPassword ? "text" : "password"}
                       placeholder="Enter your password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
