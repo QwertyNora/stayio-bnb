@@ -7,6 +7,7 @@ type UserLoginData = Omit<
   "createdAt" | "updatedAt" | "email" | "userName"
 > & {
   emailOrUserName: string;
+  login: string;
 };
 
 type UserResetPasswordData = {
