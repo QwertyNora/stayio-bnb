@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "@/hooks/use-toast";
 import { AlertCircle, CheckCircle2, MapPin, DollarSign } from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
 
 interface Listing {
   id: string;
@@ -114,7 +115,15 @@ export default function ProfileListingsPage() {
     }
   };
 
-  if (loading) return <p className="text-center text-xl mt-8">Loading...</p>;
+  if (loading) {
+    return (
+      <div className="flex flex-col justify-center items-center h-screen bg-gray-100">
+        <Spinner className="text-grey-100">
+          <span className="text-grey-200">Loading ...</span>
+        </Spinner>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto my-28  px-4 py-8">
