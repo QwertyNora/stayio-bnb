@@ -5,49 +5,46 @@ import { motion } from "framer-motion";
 import { Button, Card } from "antd";
 import { useUser } from "@/context/user";
 import { useRouter } from "next/navigation";
-import { fetchWithToken } from "@/utils/fetchWithToken"; // Importera helper-funktionen
+import { fetchWithToken } from "@/utils/fetchWithToken";
+import { Spinner } from "@/components/ui/spinner";
 
 export default function ProfilePage() {
-  const { user, token } = useUser(); // Hämta token från user-context
-  const [bookings, setBookings] = useState<any[]>([]); // State för bokningar
-  const [loading, setLoading] = useState(true); // Laddningsindikator
+  const { user, token } = useUser();
+  const [bookings, setBookings] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
     const loadProfile = async () => {
-      const token = localStorage.getItem("@library/token"); // Hämta token från localStorage
+      const token = localStorage.getItem("@library/token");
       if (token) {
         try {
-          // Gör en explicit begäran till servern och inkludera token
           const response = await fetch("/api/auth/profile", {
             headers: {
-              Authorization: `Bearer ${token}`, // Inkludera JWT-tokenen i Authorization-headern
+              Authorization: `Bearer ${token}`,
             },
           });
 
           if (!response.ok) {
             throw new Error("Unauthorized");
           }
-
-          // Om framgång, fortsätt ladda profilen
         } catch (error) {
-          router.push("/login"); // Omdirigera vid fel
+          router.push("/login");
         }
       } else {
-        router.push("/login"); // Omdirigera om ingen token finns
+        router.push("/login");
       }
     };
 
     loadProfile();
   }, []);
 
-  // Hämta bokningar när token finns
   useEffect(() => {
     const loadBookings = async () => {
       if (token) {
         try {
-          const data = await fetchWithToken("/api/users/me", token); // Hämta användardata inkl. bokningar
-          setBookings(data.bookings || []); // Uppdatera bokningsstate
+          const data = await fetchWithToken("/api/users/me", token);
+          setBookings(data.bookings || []);
         } catch (error) {
           console.error("Failed to fetch bookings", error);
         } finally {
@@ -60,11 +57,17 @@ export default function ProfilePage() {
   }, [token]);
 
   const handleUpdateBooking = (bookingId: string) => {
-    router.push(`/bookings/update/${bookingId}`); // Redirect till en uppdateringssida för bokningen
+    router.push(`/bookings/update/${bookingId}`);
   };
 
   if (loading) {
-    return <p>Loading...</p>; // Visa laddningsmeddelande medan bokningar hämtas
+    return (
+      <div className="flex flex-col justify-center items-center h-screen bg-gray-100">
+        <Spinner className="text-grey-100">
+          <span className="text-grey-200">Loading ...</span>
+        </Spinner>
+      </div>
+    );
   }
 
   const hasBookings = bookings.length > 0;
