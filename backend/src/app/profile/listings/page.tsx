@@ -117,7 +117,7 @@ export default function ProfileListingsPage() {
   if (loading) return <p className="text-center text-xl mt-8">Loading...</p>;
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto my-28  px-4 py-8">
       <h1 className="text-3xl font-bold mb-6 text-primary">My Listings</h1>
       {listings.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -164,6 +164,11 @@ export default function ProfileListingsPage() {
               </CardFooter>
             </Card>
           ))}
+          <div>
+            <Button className="my-7" onClick={handleCreateListing} size="lg">
+              Create New Listing
+            </Button>
+          </div>
         </div>
       ) : (
         <div className="text-center">
