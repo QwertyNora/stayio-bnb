@@ -2,11 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Card, message } from "antd";
+import { Card } from "antd";
 import { useUser } from "@/context/user";
 import { fetchWithToken } from "@/utils/fetchWithToken";
 import { DateRangePicker } from "@/components/datePicker";
 import { Spinner } from "@/components/ui/spinner";
+import { toast } from "@/hooks/use-toast";
+import { CheckCircle2, AlertCircle } from "lucide-react";
 
 export default function UpdateBookingPage({
   params,
@@ -40,6 +42,16 @@ export default function UpdateBookingPage({
       } catch (error: any) {
         console.error("Failed to fetch booking or listing", error);
         setError(error.message || "Failed to load booking data");
+        toast({
+          title: "Error",
+          description: (
+            <div className="flex items-center">
+              <AlertCircle className="h-4 w-4 text-red-500 mr-2" />
+              <span>Failed to load booking data.</span>
+            </div>
+          ),
+          variant: "destructive",
+        });
       } finally {
         setLoading(false);
       }
@@ -63,26 +75,37 @@ export default function UpdateBookingPage({
     }
 
     try {
-      const response = await fetchWithToken(
-        `/api/bookings/${params.id}`,
-        token,
-        {
-          method: "PUT",
-          body: JSON.stringify({
-            checkInDate: dates[0].toISOString(),
-            checkOutDate: dates[1].toISOString(),
-            totalPrice,
-          }),
-        }
-      );
+      await fetchWithToken(`/api/bookings/${params.id}`, token, {
+        method: "PUT",
+        body: JSON.stringify({
+          checkInDate: dates[0].toISOString(),
+          checkOutDate: dates[1].toISOString(),
+          totalPrice,
+        }),
+      });
 
-      message.success("Booking updated successfully");
+      toast({
+        title: "Booking Updated",
+        description: (
+          <div className="flex items-center">
+            <CheckCircle2 className="h-4 w-4 text-green-500 mr-2" />
+            <span>The booking has been successfully updated.</span>
+          </div>
+        ),
+      });
       await fetchBookingAndListing();
     } catch (error: any) {
       console.error("Error during booking update", error);
-      message.error(
-        error.message || "An error occurred while updating the booking"
-      );
+      toast({
+        title: "Update Failed",
+        description: (
+          <div className="flex items-center">
+            <AlertCircle className="h-4 w-4 text-red-500 mr-2" />
+            <span>An error occurred while updating the booking.</span>
+          </div>
+        ),
+        variant: "destructive",
+      });
     }
   };
 
