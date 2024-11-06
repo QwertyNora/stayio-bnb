@@ -10,7 +10,7 @@ export default async function handler(
 
     try {
       const uploadResponse = await cloudinary.uploader.upload(image, {
-        folder: "listings", // Optional: specify a folder in Cloudinary
+        folder: "listings",
       });
 
       res.status(200).json({ url: uploadResponse.secure_url });

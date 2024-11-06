@@ -42,7 +42,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-
-// TODO:
-// Ändra username or email i login
-// Ta password twice från blogerino och show etc

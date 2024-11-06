@@ -2,16 +2,15 @@ import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import bookingValidator from "@/utils/validators/bookingValidator";
 import createBooking from "@/actions/createBooking";
-import { verifyJWT } from "@/utils/jwt"; // Validera JWT-token
+import { verifyJWT } from "@/utils/jwt";
 
 const prisma = new PrismaClient();
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    console.log("Received request body:", body); // Logga den inkommande datan
+    console.log("Received request body:", body);
 
-    // Validera användarens JWT
     const Authorization = request.headers.get("Authorization");
     if (!Authorization) {
       console.log("Authorization header missing");
@@ -26,7 +25,6 @@ export async function POST(request: NextRequest) {
     }
     console.log("User authenticated:", user);
 
-    // Validera bokningsdata
     const [hasErrors, errors] = await bookingValidator(body);
     if (hasErrors) {
       console.log("Booking validation errors:", errors);
@@ -34,10 +32,9 @@ export async function POST(request: NextRequest) {
     }
     console.log("Booking data validated");
 
-    // Skapa bokningen
     const newBooking = await createBooking({
       ...body,
-      createdById: user.userId, // Lägg till användar-ID från JWT
+      createdById: user.userId,
     });
 
     console.log("Booking created successfully:", newBooking);

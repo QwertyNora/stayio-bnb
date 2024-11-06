@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
-import { verifyJWT } from "@/utils/jwt"; // Importera JWT-verifieringsverktyget
+import { verifyJWT } from "@/utils/jwt";
 
 const prisma = new PrismaClient();
 
@@ -19,10 +19,8 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Invalid token" }, { status: 401 });
     }
 
-    // Hämta användarens ID från det dekrypterade JWT-tokenet
     const userId = decodedToken.userId;
 
-    // Hämta användarens information inklusive bokningar
     const user = await prisma.user.findUnique({
       where: { id: userId },
       include: {

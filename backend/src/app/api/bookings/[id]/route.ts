@@ -32,7 +32,6 @@ export async function PUT(
 
     const userId = decodedToken.userId;
 
-    // Fetch the current booking
     const currentBooking = await prisma.booking.findUnique({
       where: { id: params.id },
       include: { listing: true },
@@ -45,7 +44,6 @@ export async function PUT(
       );
     }
 
-    // Check if the user is authorized to update this booking
     if (currentBooking.createdById !== userId) {
       return NextResponse.json(
         {
@@ -56,14 +54,12 @@ export async function PUT(
       );
     }
 
-    // Remove the old booking dates from the listing
     const oldBookedDates = currentBooking.listing.bookedDates.filter(
       (date) =>
         date >= currentBooking.checkInDate &&
         date <= currentBooking.checkOutDate
     );
 
-    // Add the new booking dates to the listing
     const newBookedDates: Date[] = [];
     let currentDate = new Date(checkInDate);
     const endDate = new Date(checkOutDate);
@@ -72,7 +68,6 @@ export async function PUT(
       currentDate.setDate(currentDate.getDate() + 1);
     }
 
-    // Check if the new dates are available
     const conflictingDates = currentBooking.listing.bookedDates.filter(
       (date) =>
         !oldBookedDates.includes(date) &&
@@ -86,7 +81,6 @@ export async function PUT(
       );
     }
 
-    // Update the booking and the listing
     const [updatedBooking, updatedListing] = await prisma.$transaction([
       prisma.booking.update({
         where: { id: params.id },

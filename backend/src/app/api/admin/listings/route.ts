@@ -27,7 +27,6 @@ export async function GET(req: Request) {
       },
     });
 
-    // const listings = await prisma.listing.findMany();
     return NextResponse.json(listings);
   } catch (error) {
     console.error("Error fetching listings:", error);

@@ -87,7 +87,7 @@ export default function LoginPage() {
                     <button
                       type="button"
                       className="absolute right-3 top-2 text-gray-500"
-                      onClick={() => setShowPassword(!showPassword)} // Toggle password visibility
+                      onClick={() => setShowPassword(!showPassword)}
                     >
                       {showPassword ? (
                         <EyeOff className="w-5 h-5" />

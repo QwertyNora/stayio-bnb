@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import updateBooking from "@/actions/updateBooking";
-import { verifyJWT } from "@/utils/jwt"; // JWT-verifiering
+import { verifyJWT } from "@/utils/jwt";
 
 const prisma = new PrismaClient();
 

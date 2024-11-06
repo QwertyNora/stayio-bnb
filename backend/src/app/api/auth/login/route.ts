@@ -38,12 +38,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Password mismatch" }, { status: 400 });
     }
 
-    // Skapa JWT-token
     const token = await signJWT({
       userId: user.id,
     });
 
-    // Returnera token till frontend så att den kan lagras i localStorage
     return NextResponse.json({ token }, { status: 200 });
   } catch (error: any) {
     console.log("Error: failed to login", error.message);
