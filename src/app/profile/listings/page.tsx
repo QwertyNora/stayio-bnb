@@ -127,7 +127,6 @@ export default function ProfileListingsPage() {
 
   return (
     <div className="container mx-auto my-28  px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6 text-primary">My Listings</h1>
       {listings.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {listings.map((listing) => (
