@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { getListings } from "@/actions/getListings";
 import FeaturedListingsSlider from "@/components/featured";
 import ReviewComponent from "@/components/review";
@@ -9,6 +9,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Spinner } from "@/components/ui/spinner";
 import { reviews, Review } from "@/data/reviews";
+import ListingsGrid from "@/components/grid";
 
 const heroImages = [
   "/images/image-1.jpg",
@@ -148,6 +149,15 @@ export default function Home() {
             ))}
           </div>
         </div>
+      </section>
+      {/* Random Listings Grid */}
+      <section className="container mx-auto px-4 py-12">
+        <h2 className="text-3xl font-semibold text-center mb-8">
+          Explore More Listings
+        </h2>
+        <Suspense fallback={<Spinner className="m-4" />}>
+          <ListingsGrid />
+        </Suspense>
       </section>
     </div>
   );
