@@ -18,6 +18,7 @@ import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 
 interface ListingCardProps {
   listing: Partial<Listing> | undefined;
+  className?: string;
 }
 
 export default function ListingCard({ listing }: ListingCardProps) {
