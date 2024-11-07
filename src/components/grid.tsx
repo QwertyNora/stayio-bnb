@@ -102,7 +102,7 @@ function ListingCard({ listing, isFeatured = false }: ListingCardProps) {
             className="transition-all duration-500 ease-in-out group-hover:scale-110"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-          <div className="absolute top-0 right-0 bg-white/70 p-2 rounded-bl-lg shadow-md transition-transform duration-300 transform group-hover:scale-110">
+          <div className="absolute top-0 right-0 bg-white/70 p-2 rounded-bl-lg shadow-md transition-transform duration-300 transform group-hover:scale-110 cursor-pointer">
             <Heart className="h-5 w-5 text-red-500" />
           </div>
           <Link
